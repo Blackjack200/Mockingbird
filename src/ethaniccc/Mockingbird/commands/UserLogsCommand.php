@@ -10,7 +10,7 @@ use pocketmine\command\PluginIdentifiableCommand;
 use pocketmine\plugin\Plugin;
 use pocketmine\utils\TextFormat;
 
-class UserLogsCommand extends Command implements PluginIdentifiableCommand{
+class UserLogsCommand extends Command{
 
     /** @var Mockingbird */
     private $plugin;

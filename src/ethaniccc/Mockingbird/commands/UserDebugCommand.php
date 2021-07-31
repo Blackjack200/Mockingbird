@@ -19,13 +19,13 @@ use pocketmine\network\mcpe\protocol\DataPacketTest;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\PacketPool;
 use pocketmine\network\mcpe\protocol\SetActorMotionPacket;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 use pocketmine\network\mcpe\protocol\DataPacket;
 
-class UserDebugCommand extends Command implements PluginIdentifiableCommand{
+class UserDebugCommand extends Command{
 
     /** @var Mockingbird */
     private $plugin;

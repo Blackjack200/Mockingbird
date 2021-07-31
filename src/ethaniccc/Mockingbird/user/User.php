@@ -20,7 +20,7 @@ use pocketmine\block\Block;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\NetworkStackLatencyPacket;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 
@@ -124,13 +124,13 @@ class User{
         $this->hitData = new HitData();
         $this->hitData->lastTick = Server::getInstance()->getTick();
         $this->tickData = new TickData();
-        $this->moveData->lastOnGroundLocation = $player->asLocation();
+        $this->moveData->lastOnGroundLocation = $player->getLocation();
         $zeroVector = new Vector3(0, 0, 0);
         $this->moveData->AABB = AABB::fromPosition($zeroVector);
         $this->zeroVector = $zeroVector;
         $this->moveData->moveDelta = $zeroVector;
         $this->moveData->lastMoveDelta = $zeroVector;
-        $this->moveData->location = $player->asLocation();
+        $this->moveData->location = $player->getLocation();
         $this->moveData->lastLocation = $this->moveData->location;
         $this->moveData->lastMotion = $zeroVector;
         $this->moveData->directionVector = $zeroVector;

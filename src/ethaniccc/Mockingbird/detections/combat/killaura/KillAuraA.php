@@ -27,7 +27,7 @@ class KillAuraA extends Detection{
 
     public function handleReceive(DataPacket $packet, User $user): void{
         if($packet instanceof InventoryTransactionPacket && $packet->trData->getTypeId() === InventoryTransactionPacket::TYPE_USE_ITEM_ON_ENTITY && $packet->trData->getActionType() === UseItemOnEntityTransactionData::ACTION_ATTACK){
-            $ent = $user->player->getLevelNonNull()->getEntity($packet->trData->getEntityRuntimeId());
+            $ent = $user->player->getWorld()->getEntity($packet->trData->getEntityRuntimeId());
             if($ent !== null && $this->lastEntity !== null && $ent->getId() !== $this->lastEntity->getId() && $ent->distance($this->lastEntity) > 2){
                 ++$this->entities;
                 if($this->entities > 1){

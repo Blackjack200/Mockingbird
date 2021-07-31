@@ -16,7 +16,7 @@ class KickTask extends Task{
         $this->message = $message;
     }
 
-    public function onRun(int $currentTick){
+    public function onRun() : void {
         $player = $this->user->player;
         $player->kick($this->message, false);
         UserManager::getInstance()->unregister($player);

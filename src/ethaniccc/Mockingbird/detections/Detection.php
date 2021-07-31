@@ -11,7 +11,7 @@ use ethaniccc\Mockingbird\user\UserManager;
 use pocketmine\event\Event;
 use pocketmine\network\mcpe\protocol\BatchPacket;
 use pocketmine\network\mcpe\protocol\DataPacket;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\Server;
 use pocketmine\utils\TextFormat;
 

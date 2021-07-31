@@ -3,8 +3,11 @@
 namespace ethaniccc\Mockingbird\utils;
 
 use ethaniccc\Mockingbird\user\User;
+use pocketmine\network\mcpe\convert\GlobalItemTypeDictionary;
 use pocketmine\network\mcpe\protocol\MovePlayerPacket;
 use pocketmine\network\mcpe\protocol\PlayerAuthInputPacket;
+use pocketmine\network\mcpe\protocol\serializer\PacketSerializer;
+use pocketmine\network\mcpe\protocol\serializer\PacketSerializerContext;
 
 class PacketUtils{
 
@@ -17,7 +20,9 @@ class PacketUtils{
         $movePk->yaw = $packet->getYaw();
         $movePk->headYaw = $packet->getHeadYaw();
         $movePk->onGround = true;
-        return $movePk;
+	    $protocol = GlobalItemTypeDictionary::getDictionaryProtocol($user->player->getNetworkSession()->getProtocolId());
+	    $movePk->encode(PacketSerializer::encoder(new PacketSerializerContext(GlobalItemTypeDictionary::getInstance()->getDictionary($protocol))));
+	    return $movePk;
     }
 
 }

@@ -22,7 +22,7 @@ class DebugWriteTask extends AsyncTask{
         $this->shouldOverwrite = $val;
     }
 
-    public function onRun(){
+    public function onRun() : void {
         if($this->data !== ''){
             if($this->shouldOverwrite){
                 @file_put_contents($this->debugPath, $this->data);

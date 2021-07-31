@@ -9,6 +9,7 @@ use ethaniccc\Mockingbird\utils\MathUtils;
 use ethaniccc\Mockingbird\utils\PredictionUtils;
 use pocketmine\block\Ice;
 use pocketmine\entity\Effect;
+use pocketmine\entity\effect\VanillaEffects;
 use pocketmine\math\Vector3;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\PlayerAuthInputPacket;
@@ -49,8 +50,8 @@ class SpeedB extends Detection implements CancellableMovement{
                         break;
                     }
                 }
-                if($user->player->getEffect(1) !== null){
-                    $amplifier = $user->player->getEffect(1)->getAmplifier() + 1;
+                if($user->player->getEffects()->get(VanillaEffects::SPEED()) !== null){
+                    $amplifier = $user->player->getEffects()->get(VanillaEffects::SPEED())->getAmplifier() + 1;
                     $maxSpeed += 0.2 * $amplifier;
                     $this->ticksSinceSpeed = 0;
                 } else {
@@ -58,7 +59,7 @@ class SpeedB extends Detection implements CancellableMovement{
                 }
                 if($horizontalSpeed > $maxSpeed && $user->timeSinceTeleport >= 10 && $user->timeSinceMotion >= 20 && $user->timeSinceStoppedFlight >= 20 && !$user->player->isSpectator() && $user->timeSinceStoppedGlide >= 10){
                     // player just lost their speed effect
-                    if($user->player->getEffect(1) === null && $this->ticksSinceSpeed <= 20){
+                    if($user->player->getEffects()->get(VanillaEffects::SPEED()) === null && $this->ticksSinceSpeed <= 20){
                         return;
                     }
                     if(++$this->preVL >= 2){

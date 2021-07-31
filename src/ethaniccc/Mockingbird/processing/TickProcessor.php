@@ -5,15 +5,8 @@ namespace ethaniccc\Mockingbird\processing;
 use ethaniccc\Mockingbird\Mockingbird;
 use ethaniccc\Mockingbird\tasks\KickTask;
 use ethaniccc\Mockingbird\user\User;
-use ethaniccc\Mockingbird\utils\boundingbox\AABB;
-use ethaniccc\Mockingbird\utils\location\LocationHistory;
-use ethaniccc\Mockingbird\utils\Pair;
-use pocketmine\entity\Entity;
 use pocketmine\network\mcpe\protocol\DataPacket;
-use pocketmine\network\mcpe\protocol\NetworkStackLatencyPacket;
 use pocketmine\network\mcpe\protocol\PlayerAuthInputPacket;
-use pocketmine\network\mcpe\protocol\ProtocolInfo;
-use pocketmine\entity\Villager;
 use pocketmine\Server;
 
 class TickProcessor extends RunnableProcessor{
@@ -31,8 +24,8 @@ class TickProcessor extends RunnableProcessor{
         if(!$user->loggedIn)
             return;
         if(microtime(true) - $user->lastSentNetworkLatencyTime >= 1 && $user->responded){
-            $user->player->dataPacket($user->latencyPacket);
-            $user->lastSentNetworkLatencyTime = microtime(true);
+            $user->player->getNetworkSession()->sendDataPacket($user->latencyPacket);
+	        $user->lastSentNetworkLatencyTime = microtime(true);
             $user->responded = false;
         }
         $this->stuckTicks = $this->ticks === $this->lastTick ? $this->stuckTicks + 1 : 0;

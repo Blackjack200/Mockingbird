@@ -3,7 +3,7 @@
 namespace ethaniccc\Mockingbird\user;
 
 use pocketmine\entity\Entity;
-use pocketmine\Player;
+use pocketmine\player\Player;
 
 class UserManager{
 

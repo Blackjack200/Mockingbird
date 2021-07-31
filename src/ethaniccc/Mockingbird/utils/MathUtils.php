@@ -45,7 +45,7 @@ class MathUtils{
         $variance = 0;
         $average = array_sum($nums) / count($nums);
         foreach($nums as $num){
-            $variance += pow($num - $average, 2);
+            $variance += ($num - $average) ** 2;
         }
         return sqrt($variance / count($nums));
     }
@@ -85,22 +85,22 @@ class MathUtils{
             }
 
             $efficiencyFirst = $count * ($count + 1) / (($count - 1) * ($count - 2) * ($count - 3));
-            $efficiencySecond = 3 * pow($count - 1, 2) / (($count - 2) * ($count - 3));
+            $efficiencySecond = 3 * (($count - 1) ** 2) / (($count - 2) * ($count - 3));
             $average = $sum / $count;
 
             $variance = 0.0;
             $varianceSquared = 0.0;
 
             foreach($data as $number){
-                $variance += pow($average - $number, 2);
-                $varianceSquared += pow($average - $number, 4);
+                $variance += ($average - $number) ** 2;
+                $varianceSquared += ($average - $number) ** 4;
             }
 
             if($variance === 0.0){
                 return 0.0;
             }
 
-            return $efficiencyFirst * ($varianceSquared / pow($variance / $sum, 2)) - $efficiencySecond;
+            return $efficiencyFirst * ($varianceSquared / (($variance / $sum) ** 2)) - $efficiencySecond;
         } catch(\ErrorException $e){
             return 0.0;
         }
@@ -129,7 +129,7 @@ class MathUtils{
         $mean = array_sum($data) / count($data);
 
         foreach ($data as $number) {
-            $variance += pow($number - $mean, 2);
+            $variance += ($number - $mean) ** 2;
         }
 
         return $variance / count($data);
@@ -160,9 +160,9 @@ class MathUtils{
     public static function getMedian(array $data) : float{
         if (count($data) % 2 === 0) {
             return ($data[count($data) / 2] + $data[count($data) / 2 - 1]) / 2;
-        } else {
-            return $data[count($data) / 2];
         }
+
+	    return $data[count($data) / 2];
     }
 
     public static function getGCD(float $a, float $b) : float{
@@ -171,9 +171,9 @@ class MathUtils{
         }
         if(abs($b) < 0.001){
             return $a;
-        } else {
-            return self::getGCD($b, $a - floor($a / $b) * $b);
         }
+
+	    return self::getGCD($b, $a - floor($a / $b) * $b);
     }
 
     public static function getArrayGCD(array $nums) : float{
@@ -181,7 +181,7 @@ class MathUtils{
             return 0.0;
         }
         $result = $nums[0];
-        for($i = 1; $i < count($nums); $i++){
+        for($i = 1, $iMax = count($nums); $i < $iMax; $i++){
             $result = self::getGCD($nums[$i], $result);
         }
         return $result;

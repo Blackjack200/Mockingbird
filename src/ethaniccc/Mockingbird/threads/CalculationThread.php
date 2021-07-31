@@ -3,7 +3,7 @@
 namespace ethaniccc\Mockingbird\threads;
 
 use ethaniccc\Mockingbird\utils\MathUtils;
-use pocketmine\Thread;
+use pocketmine\thread\Thread;
 use pocketmine\snooze\SleeperNotifier;
 
 class CalculationThread extends Thread{
@@ -26,34 +26,8 @@ class CalculationThread extends Thread{
         $this->logger = $logger;
         $this->id = self::$currentMaxID++;
         $this->notifier = $notifier;
-        self::$finishCallableList[$this->id] = [];
-        $this->setClassLoader(null);
-    }
-
-    public function run(){
-        $this->registerClassLoader();
-        MathUtils::init();
-        while($this->running){
-            // results will be in batches
-            $start = microtime(true);
-            while(($task = $this->getFromTodo()) !== null){
-                // try to do the task and add the result - otherwise catch the error and log so the thread doesn't crash.
-                try{
-                    $result = ($task)();
-                    $this->addToDone($result);
-                } catch(\Error $e){
-                    $this->logger->debug('Error while attempting to complete task: ' . $e->getMessage());
-                }
-            }
-            $end = microtime(true);
-            $this->notifier->wakeupSleeper();
-            $tickSpeed = $this->tickSpeed * 0.05;
-            if(($delta = ($end - $start)) <= $tickSpeed){
-                @time_sleep_until($end + $tickSpeed - $delta);
-            } else {
-                $this->logger->debug('Mockingbird CalculationThread catching up (no sleep) delta=' . $delta);
-            }
-        }
+	    self::$finishCallableList[$this->id] = [];
+	    $this->setClassLoaders(null);
     }
 
     public function handleServerTick() : void{
@@ -96,9 +70,35 @@ class CalculationThread extends Thread{
         return $shift ? array_shift(self::$finishCallableList[$this->id]) : reset(self::$finishCallableList[$this->id]);
     }
 
-    public function quit(){
-        $this->running = false;
-        parent::quit();
-    }
+	public function quit() : void {
+		$this->running = false;
+		parent::quit();
+	}
 
+	protected function onRun() : void {
+		gc_enable();
+		$this->registerClassLoaders();
+		MathUtils::init();
+		while ($this->running) {
+			// results will be in batches
+			$start = microtime(true);
+			while (($task = $this->getFromTodo()) !== null) {
+				// try to do the task and add the result - otherwise catch the error and log so the thread doesn't crash.
+				try {
+					$result = ($task)();
+					$this->addToDone($result);
+				} catch (\Error $e) {
+					$this->logger->debug('Error while attempting to complete task: ' . $e->getMessage());
+				}
+			}
+			$end = microtime(true);
+			$this->notifier->wakeupSleeper();
+			$tickSpeed = $this->tickSpeed * 0.05;
+			if (($delta = ($end - $start)) <= $tickSpeed) {
+				@time_sleep_until($end + $tickSpeed - $delta);
+			} else {
+				$this->logger->debug('Mockingbird CalculationThread catching up (no sleep) delta=' . $delta);
+			}
+		}
+	}
 }

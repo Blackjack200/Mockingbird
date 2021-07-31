@@ -32,8 +32,6 @@ use ethaniccc\Mockingbird\detections\packet\badpackets\BadPacketC;
 use ethaniccc\Mockingbird\detections\packet\badpackets\BadPacketD;
 use ethaniccc\Mockingbird\detections\packet\badpackets\BadPacketE;
 use ethaniccc\Mockingbird\detections\packet\timer\TimerA;
-use ethaniccc\Mockingbird\detections\packet\timer\TimerB;
-use ethaniccc\Mockingbird\detections\player\cheststeal\ChestStealerA;
 use ethaniccc\Mockingbird\detections\player\editionfaker\EditionFakerA;
 use ethaniccc\Mockingbird\detections\player\nuker\NukerA;
 use ethaniccc\Mockingbird\detections\PremiumLoader;
@@ -106,21 +104,21 @@ final class Mockingbird extends PluginBase{
         // this will only work if the premium checks are in the given copy of Mockingbird
         PremiumLoader::register();
         $this->registerCommands();
-        $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function(int $currentTick) : void{
-            // first handle things with user tick processors
-            foreach(UserManager::getInstance()->getUsers() as $user){
-                $user->tickProcessor->run($user);
-            }
-            if($currentTick % 400 === 0){
-                $this->getServer()->getAsyncPool()->submitTask($this->debugTask);
-                $this->debugTask = new DebugWriteTask($this->getDataFolder() . 'debug_log.txt');
-            }
-            $this->calculationThread->handleServerTick();
-        }), 1);
-        @mkdir($this->getDataFolder() . 'packet_logs');
-        @mkdir($this->getDataFolder() . 'mouse_recordings');
-       
-        PacketPool::registerPacket(new PlayerAuthInputPacket);
+	    $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function () : void {
+		    // first handle things with user tick processors
+		    foreach (UserManager::getInstance()->getUsers() as $user) {
+			    $user->tickProcessor->run($user);
+		    }
+		    $this->calculationThread->handleServerTick();
+	    }), 1);
+	    $this->getScheduler()->scheduleRepeatingTask(new ClosureTask(function () : void {
+		    $this->getServer()->getAsyncPool()->submitTask($this->debugTask);
+		    $this->debugTask = new DebugWriteTask($this->getDataFolder() . 'debug_log.txt');
+	    }), 400);
+	    @mkdir($this->getDataFolder() . 'packet_logs');
+	    @mkdir($this->getDataFolder() . 'mouse_recordings');
+
+	    PacketPool::getInstance()->registerPacket(new PlayerAuthInputPacket);
     }
 
     public function getPrefix() : string{
@@ -225,31 +223,16 @@ final class Mockingbird extends PluginBase{
                         }
                     }
                 }
-                // set the current config setting value to the old config setting value
-                $this->getConfig()->set($key, $value);
+	            // set the current config setting value to the old config setting value
+	            $this->getConfig()->set($key, $value);
             }
         }
-        // save the config - (why are comments being deleted here?)
-        $this->getConfig()->save();
-        return true;
+	    // save the config - (why are comments being deleted here?)
+	    $this->getConfig()->save();
+	    return true;
     }
 
-    public function onDisable(){
-        if($this->getConfig()->get('upload_debug')){
-            $options = array(
-                'ssl' => array(
-                    'verify_peer' => false,
-                    'verify_peer_name' => false,
-                ),
-                'http' => array(
-                    'http' => "Content-type: application/x-www-form-urlencoded\r\n",
-                    'method' => 'POST',
-                    'content' => http_build_query(['data' => base64_encode(file_get_contents($this->getDataFolder() . 'debug_log.txt'))])
-                )
-            );
-            $response = @file_get_contents('https://mb-debug-logs.000webhostapp.com/', false, stream_context_create($options));
-            $this->getLogger()->debug("Response: $response");
-        }
-    }
+	public function onDisable() : void {
+	}
 
 }

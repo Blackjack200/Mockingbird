@@ -4,9 +4,12 @@ namespace ethaniccc\Mockingbird\detections\player\editionfaker;
 
 use ethaniccc\Mockingbird\detections\Detection;
 use ethaniccc\Mockingbird\user\User;
+use pocketmine\network\mcpe\JwtException;
+use pocketmine\network\mcpe\JwtUtils;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\LoginPacket;
 use pocketmine\network\mcpe\protocol\PlayerAuthInputPacket;
+use pocketmine\network\PacketHandlingException;
 
 /**
  * Class EditionFakerA
@@ -29,7 +32,12 @@ class EditionFakerA extends Detection{
             if($user->win10 && !$user->isDesktop){
                 $this->faking = true;
             }
-            $this->givenOS = $packet->clientData["DeviceOS"];
+	        try{
+		        [, $clientDataClaims, ] = JwtUtils::parse($packet->clientDataJwt);
+	        }catch(JwtException $e){
+		        throw PacketHandlingException::wrap($e);
+	        }
+            $this->givenOS = $clientDataClaims["DeviceOS"];
         } elseif($packet instanceof PlayerAuthInputPacket && $this->faking && $user->loggedIn){
             $this->fail($user, "givenOS={$this->givenOS} realOS=win10");
         }

@@ -30,14 +30,15 @@ class BadPacketE extends Detection{
             // as to why -0.07840000092983246 is the prediction, see FlyA:
             // ($lastYDelta - 0.08) * 0.980000012
             // if the client is on the ground, $lastYDelta is probably 0.
-            if(($diff = ($packet->getDelta()->y + 0.07840000092983246)) < -0.34 && $this->lastDiff > $diff && abs($user->moveData->moveDelta->y) < 0.00001 /* precision go brrrr? */ && $user->timeSinceJoin >= 100 && $user->timeSinceTeleport >= 10){
+	        $delta = $user->player->getPosition()->y - $packet->getPosition()->y;
+	        if(($diff = ($delta + 0.07840000092983246)) < -0.34 && $this->lastDiff > $diff && abs($user->moveData->moveDelta->y) < 0.00001 /* precision go brrrr? */ && $user->timeSinceJoin >= 100 && $user->timeSinceTeleport >= 10){
                 // if this behavior continues consistently
                 if(++$this->preVL >= 40){
-                    $this->fail($user, 'moveDeltaY=' . $user->moveData->moveDelta->y . ' received=' . $packet->getDelta()->y . ' diff=' . $diff . ' lastDiff=' . $this->lastDiff);
+                    $this->fail($user, 'moveDeltaY=' . $user->moveData->moveDelta->y . ' received=' . $delta . ' diff=' . $diff . ' lastDiff=' . $this->lastDiff);
                 }
             }
             if($this->isDebug($user)){
-                $user->sendMessage('moveDeltaY=' . $user->moveData->moveDelta->y . ' received=' . $packet->getDelta()->y . ' diff=' . $diff . ' lastDiff=' . $this->lastDiff);
+                $user->sendMessage('moveDeltaY=' . $user->moveData->moveDelta->y . ' received=' . $delta . ' diff=' . $diff . ' lastDiff=' . $this->lastDiff);
             }
             $this->lastDiff = $diff;
         }

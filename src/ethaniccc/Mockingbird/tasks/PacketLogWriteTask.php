@@ -17,7 +17,7 @@ class PacketLogWriteTask extends AsyncTask{
         $this->path = $path . '.txt'; $this->data = $data;
     }
 
-    public function onRun(){
+    public function onRun() : void {
         @unlink($this->path);
         $data = '';
         foreach($this->data as $packet){

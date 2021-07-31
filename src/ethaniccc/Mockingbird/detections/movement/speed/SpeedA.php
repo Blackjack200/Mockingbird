@@ -7,6 +7,7 @@ use ethaniccc\Mockingbird\detections\movement\CancellableMovement;
 use ethaniccc\Mockingbird\user\User;
 use ethaniccc\Mockingbird\utils\MathUtils;
 use pocketmine\item\enchantment\Enchantment;
+use pocketmine\item\enchantment\VanillaEnchantments;
 use pocketmine\item\Item;
 use pocketmine\network\mcpe\protocol\DataPacket;
 use pocketmine\network\mcpe\protocol\PlayerAuthInputPacket;
@@ -39,12 +40,6 @@ class SpeedA extends Detection implements CancellableMovement{
                 && $user->moveData->ticksSinceInVoid >= 10
                 && $user->hasReceivedChunks){
                     $canFlag = true;
-                    foreach($user->player->getArmorInventory()->getContents() as $item){
-                        if($item->hasEnchantment(Enchantment::DEPTH_STRIDER) && $user->moveData->liquidTicks < 10){
-                            $canFlag = false;
-                            break;
-                        }
-                    }
                     if($canFlag && ++$this->preVL >= 3){
                         $this->fail($user, "e=$equalness cXZ=$currentXZ lXZ=$lastXZ");
                     }

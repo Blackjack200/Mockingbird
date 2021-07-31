@@ -40,18 +40,19 @@ class AABB extends AxisAlignedBB{
     }
 
     public static function fromBlock(Block $block) : AABB{
-        $b = $block->getBoundingBox();
-        if($b !== null) {
-            return new AABB(
-                $b->minX, $b->minY, $b->minZ,
-                $b->maxX, $b->maxY, $b->maxZ
-            );
-        } else {
-            return new AABB(
-                $block->getX(), $block->getY(), $block->getZ(),
-                $block->getX() + 1, $block->getY() + 1, $block->getZ() + 1
-            );
-        }
+	    $b = $block->getCollisionBoxes();
+	    $b = $b[array_key_first($b)] ?? null;
+	    if ($b !== null) {
+		    return new AABB(
+			    $b->minX, $b->minY, $b->minZ,
+			    $b->maxX, $b->maxY, $b->maxZ
+		    );
+	    }
+
+	    return new AABB(
+		    $block->getPos()->x, $block->getPos()->y, $block->getPos()->z,
+		    $block->getPos()->x + 1, $block->getPos()->y + 1, $block->getPos()->z + 1,
+	    );
     }
 
     public function clone() : AABB{
@@ -64,10 +65,6 @@ class AABB extends AxisAlignedBB{
 
     public function grow(float $x, float $y, float $z) : AABB{
         return new AABB($this->minX - $x, $this->minY - $y, $this->minZ - $z, $this->maxX + $x, $this->maxY, $this->maxZ);
-    }
-
-    public function stretch(float $x, float $y, float $z) : AABB{
-        return new AABB($this->minX, $this->minY, $this->minZ, $this->maxX + $x, $this->maxY, $this->maxZ);
     }
 
     public function contains(Vector3 $pos) : bool{

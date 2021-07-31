@@ -4,7 +4,7 @@ namespace ethaniccc\Mockingbird\utils;
 
 use pocketmine\math\AxisAlignedBB;
 use pocketmine\math\Vector3;
-use pocketmine\block\{BlockFactory, BlockIds};
+use pocketmine\block\{BlockFactory,BlockLegacyIds as BlockIds};
 use ethaniccc\Mockingbird\utils\boundingbox\AABB;
 
 // not in use for now, will use in next update probably.
@@ -13,7 +13,7 @@ final class UnknownBlockAABBList{
     private static $list = [];
 
     public static function registerDefaults(): void{
-        self::registerAABB(new AABB(0.125, 0.0, 0.125, 0.875, 0.875, 0.875), BlockIds::BREWING_STAND);
+        self::registerAABB(new AABB(0.125, 0.0, 0.125, 0.875, 0.875, 0.875), BlockIds::BREWING_STAND_BLOCK);
         self::registerAABB(new AABB(0.0, 0.0, 0.0, 1.0, 0.75, 1.0), BlockIds::ENCHANTING_TABLE);
         //Lever
         self::registerAABB(new AABB(0.25, 0.375, 0.25, 0.75, 1.0, 0.75), BlockIds::LEVER);
@@ -61,10 +61,10 @@ final class UnknownBlockAABBList{
         self::registerAABB(new AABB(0.3125, 0.0, 0.3125, 0.6875, 0.375, 0.6875), BlockIds::RED_MUSHROOM);
         self::registerAABB(new AABB(0.3125, 0.0, 0.3125, 0.6875, 0.375, 0.6875), BlockIds::BROWN_MUSHROOM);
         //Nether Wart
-        self::registerAABB(new AABB(0.0, 0.0, 0.0, 1.0, 0.25, 1.0), BlockIds::NETHER_WART);
-        self::registerAABB(new AABB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0), BlockIds::NETHER_WART, 1);
-        self::registerAABB(new AABB(0.0, 0.0, 0.0, 1.0, 0.75, 1.0), BlockIds::NETHER_WART, 2);
-        self::registerAABB(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0), BlockIds::NETHER_WART, 3);
+        self::registerAABB(new AABB(0.0, 0.0, 0.0, 1.0, 0.25, 1.0), BlockIds::NETHER_WART_BLOCK);
+        self::registerAABB(new AABB(0.0, 0.0, 0.0, 1.0, 0.5, 1.0), BlockIds::NETHER_WART_BLOCK, 1);
+        self::registerAABB(new AABB(0.0, 0.0, 0.0, 1.0, 0.75, 1.0), BlockIds::NETHER_WART_BLOCK, 2);
+        self::registerAABB(new AABB(0.0, 0.0, 0.0, 1.0, 1.0, 1.0), BlockIds::NETHER_WART_BLOCK, 3);
         //Stems
         foreach([BlockIds::PUMPKIN_STEM, BlockIds::MELON_STEM] as $stem){
             self::registerAABB(new AABB(0.375, 0.0, 0.375, 0.625, 0.125, 0.625), $id);
@@ -82,7 +82,7 @@ final class UnknownBlockAABBList{
         self::registerAABB(new AABB(0.0, 0.0, 0.0, 1.0, 0.6875, 1.0), BlockIds::CARROTS, 6);
         self::registerAABB(new AABB(0.0, 0.0, 0.0, 1.0, 0.8125, 1.0), BlockIds::CARROTS, 7);
         //Beetroot/Potatoes
-        foreach([BlockIds::BEETROOT, BlockIds::POTATOES] as $crop){
+        foreach([BlockIds::BEETROOT_BLOCK, BlockIds::POTATOES] as $crop){
             self::registerAABB(new AABB(0.0, 0.0, 0.0, 1.0, 0.09375, 1.0), $crop);
             self::registerAABB(new AABB(0.0, 0.0, 0.0, 1.0, 0.1875, 1.0), $crop, 1);
             self::registerAABB(new AABB(0.0, 0.0, 0.0, 1.0, 0.25, 1.0), $crop, 2);
@@ -192,7 +192,7 @@ final class UnknownBlockAABBList{
         self::registerAABB(new AABB(0.6875, 0.5, 0.375, 0.9375, 0.71875, 0.625), BlockIds::COCOA, 15);
     }
     public static function getFromList(Vector3 $pos, int $id, int $meta = 0) : AxisAlignedBB{
-        return (self::$list[($id << 4) | $meta] ?? self::$list[$id << 4] ?? AABB::fromBlock(BlockFactory::get($id, $meta)->setComponents(0, 0, 0)))->offsetCopy($pos->x, $pos->y, $pos->z);
+        return (self::$list[($id << 4) | $meta] ?? self::$list[$id << 4] ?? AABB::fromBlock(BlockFactory::getInstance()->get($id, $meta))->offsetCopy($pos->x, $pos->y, $pos->z));
     }
     public static function registerAABB(AABB $aabb, int $id, int $meta = 0): void{
         self::$list[($id << 4) | $meta] = clone $aabb;

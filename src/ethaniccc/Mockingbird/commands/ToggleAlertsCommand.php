@@ -7,11 +7,11 @@ use ethaniccc\Mockingbird\user\UserManager;
 use pocketmine\command\Command;
 use pocketmine\command\CommandSender;
 use pocketmine\command\PluginIdentifiableCommand;
-use pocketmine\Player;
+use pocketmine\player\Player;
 use pocketmine\plugin\Plugin;
 use pocketmine\utils\TextFormat;
 
-class ToggleAlertsCommand extends Command implements PluginIdentifiableCommand{
+class ToggleAlertsCommand extends Command{
 
     private $plugin;
 

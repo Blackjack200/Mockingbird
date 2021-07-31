@@ -55,8 +55,8 @@ class MouseRecorder extends AsyncTask{
     }
 
     public function finish(User $user) : void{
-        $this->storeLocal([$user, $this->getAdmin()]);
-        $this->isRunning = false;
+        $this->storeLocal('local', [$user, $this->getAdmin()]);
+	    $this->isRunning = false;
         Server::getInstance()->getAsyncPool()->submitTask($this);
     }
 
@@ -64,13 +64,13 @@ class MouseRecorder extends AsyncTask{
         return $this->isRunning ? self::$adminStorage[spl_object_hash($this)] : null;
     }
 
-    public function onRun(){
-        $image = imagecreate($this->width, $this->height);
-        $backgroundColor = imagecolorallocate($image, 0, 0, 0);
-        imagefill($image, 0, 0, $backgroundColor);
-        $this->renderClicks($image);
-        imagepng($image, $this->path, 4);
-    }
+	public function onRun() : void {
+		$image = imagecreate($this->width, $this->height);
+		$backgroundColor = imagecolorallocate($image, 0, 0, 0);
+		imagefill($image, 0, 0, $backgroundColor);
+		$this->renderClicks($image);
+		imagepng($image, $this->path, 4);
+	}
 
     private function renderClicks($image) : void{
         $color = imagecolorallocatealpha($image, 0, 255, 0, 102);
@@ -92,19 +92,19 @@ class MouseRecorder extends AsyncTask{
                 $currentCord->x = fmod($this->width + $x2, $this->width);
             }
 
-            if($y2 >= $this->height){
-                $currentCord->y = fmod($x2, $this->height);
-            } elseif($y2 < 0){
-                $currentCord->y = fmod($this->height + $y2, $this->height);
-            }
+	        if ($y2 >= $this->height) {
+		        $currentCord->y = fmod($x2, $this->height);
+	        } elseif ($y2 < 0) {
+		        $currentCord->y = fmod($this->height + $y2, $this->height);
+	        }
         }
     }
 
-    public function onCompletion(Server $server){
-        [$u, $admin] = $this->fetchLocal();
-        $admin->sendMessage('Mouse recording image for ' . $u->player->getName() . ' is now available');
-        // kermit
-        $u->mouseRecorder = null;
-    }
+	public function onCompletion() : void {
+		[$u, $admin] = $this->fetchLocal('local');
+		$admin->sendMessage('Mouse recording image for ' . $u->player->getName() . ' is now available');
+		// kermit
+		$u->mouseRecorder = null;
+	}
 
 }
